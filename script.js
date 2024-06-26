@@ -6,24 +6,28 @@ const timer = document.querySelector(".app__card-timer");
 const timerBt = document.querySelector("#start-pause");
 const image = document.querySelector(".app__image");
 const title = document.querySelector(".app__title");
-const focoTempo = 1500;
-const curtoTempo = 300;
-const longoTempo = 900;
+const botoes = document.querySelectorAll(".app__card-button");
 
 // O método .addEventListener() funciona com a passagem de dois parâmetros: o tipo de evento que se quer associar ao elemento em questão e uma função callback - anônima ou a referência de uma função nominada - que executará algum comando quando o evento ocorrer.
 focoBt.addEventListener("click", (e) => {
   alterarContexto("foco");
+  focoBt.classList.add("active");
 });
 
 curtoBt.addEventListener("click", (e) => {
   alterarContexto("descanso-curto");
+  curtoBt.classList.add("active");
 });
 
 longoBt.addEventListener("click", (e) => {
   alterarContexto("descanso-longo");
+  longoBt.classList.add("active");
 });
 
 function alterarContexto(contexto) {
+  botoes.forEach((botao) => {
+    botao.classList.remove("active");
+  });
   html.setAttribute("data-contexto", contexto);
   image.setAttribute("src", `/imagens/${contexto}.png`);
   switch (contexto) {
@@ -51,6 +55,7 @@ function alterarContexto(contexto) {
       break;
   }
 }
+
 // DOM (Document Object Model) é uma forma padronizada de representar e interagir com elementos em documentos HTML e XML. Sua estrutura representa um documento em formato de árvore de elementos, em que cada elemento representa uma parte do documento.
 
 /**
@@ -70,3 +75,9 @@ function alterarContexto(contexto) {
 // O método .hasAttribute retorna um valor booleano quando passamos um determinado atributo como argumento, sendo true para o caso de ele existir no elemento ou false caso ele não exista.
 
 // O método .removeAttribute remove um determinado atributo passado como argumento.
+
+// O método .classList.toggle() realiza o trabalho de alternar uma classe em um elemento HTML. Se a classe não existir no elemento, ele a adiciona; se existir, ele a retira.
+
+// O método .classList.contains() retorna um boloeano para caso a classe exista (true) ou para caso ela não exista (false).
+
+// Os métodos .classList.add() e .classList.remove() fazem, respectivamente, a adição de uma classe à lista de classes ou a remoção desta classe da lista. Tem como adicionar ou remover mais de uma classe por vez, colocando-as todas separadas por vírgulas.
