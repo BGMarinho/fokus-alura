@@ -7,6 +7,14 @@ const timerBt = document.querySelector("#start-pause");
 const image = document.querySelector(".app__image");
 const title = document.querySelector(".app__title");
 const botoes = document.querySelectorAll(".app__card-button");
+const musicaFocoInput = document.querySelector("#alternar-musica");
+// Utilizaremos o construtor "new Audio" e passaremos como parâmetro o caminho do áudio que se quer construir um objeto.
+const musica = new Audio("/sons/luna-rise-part-one.mp3");
+// Fazendo com que a música sempre reinicie depois de finalizada.
+musica.loop = true;
+
+let tempoDecorridoSegundos = 5;
+let intervaloId = null;
 
 // O método .addEventListener() funciona com a passagem de dois parâmetros: o tipo de evento que se quer associar ao elemento em questão e uma função callback - anônima ou a referência de uma função nominada - que executará algum comando quando o evento ocorrer.
 focoBt.addEventListener("click", (e) => {
@@ -24,6 +32,16 @@ longoBt.addEventListener("click", (e) => {
   longoBt.classList.add("active");
 });
 
+// Para o caso deste escutador, utilizarei o evento "change", que é o tipo de evento utilizado para lidar com este tipo de input.
+musicaFocoInput.addEventListener("change", () => {
+  // Todo objeto construído por "new Audio" terá atributos e métodos específicos. Sendo assim, utiliza-lo-eis.
+  if (musica.paused) {
+    musica.play();
+  } else {
+    musica.pause();
+  }
+});
+
 function alterarContexto(contexto) {
   botoes.forEach((botao) => {
     botao.classList.remove("active");
@@ -33,20 +51,20 @@ function alterarContexto(contexto) {
   switch (contexto) {
     case "foco":
       title.innerHTML = `
-    Otimize sua produtividade,<br />
-    <strong class="app__title-strong">mergulhe no que importa.</strong>
-    `;
+      Otimize sua produtividade,<br />
+      <strong class="app__title-strong">mergulhe no que importa.</strong>
+      `;
       break;
     case "descanso-curto":
       // Usaremos o .innerHTML, que é uma propriedade de qualquer elemento HTML e se refere ao conteúdo que está entre as tags de abertura e fechamento do elemento. E sim, podemos passar outras tags HTML dentro do back-chick e inserir outros elementos dentro do referido elemento.
       title.innerHTML = `
-      Que tal dar uma respirada?<br />
-          <strong class="app__title-strong">Faça uma pausa curta!</strong>
-      `;
+        Que tal dar uma respirada?<br />
+        <strong class="app__title-strong">Faça uma pausa curta!</strong>
+        `;
       break;
     case "descanso-longo":
       title.innerHTML = `
-        Hora de voltar à superfície.<br />
+          Hora de voltar à superfície.<br />
           <strong class="app__title-strong">Faça uma pausa longa.</strong>
           `;
       break;
@@ -54,6 +72,33 @@ function alterarContexto(contexto) {
     default:
       break;
   }
+}
+
+const contagemRegressiva = () => {
+  if (tempoDecorridoSegundos >= 0) {
+    zerar();
+    alert('Tempo finalizado"');
+    return;
+  }
+  tempoDecorridoSegundos -= 1;
+  console.log("Temporizador: ", tempoDecorridoSegundos);
+};
+
+// Como referenciarei a função contagemRegressiva no lugar da função de callback do escutador de evento - que é a mesma coisa só que de outra forma -, preciso declarar o escutador depois da função. Para funções declaradas no modelo "function declaration", não é necessário seguir esta regra.
+timerBt.addEventListener("click", iniciarOuPausar);
+
+function iniciarOuPausar() {
+  if (intervaloId) {
+    zerar();
+    return;
+  }
+  // O método setInterval espera receber dois argumentos: a função que se quer executar e o tempo em que se quer que essa função seja executada, em milissegundos.
+  intervaloId = setInterval(contagemRegressiva, 1000);
+}
+
+function zerar() {
+  clearInterval(intervaloId);
+  intervaloId = null;
 }
 
 // DOM (Document Object Model) é uma forma padronizada de representar e interagir com elementos em documentos HTML e XML. Sua estrutura representa um documento em formato de árvore de elementos, em que cada elemento representa uma parte do documento.
@@ -81,3 +126,5 @@ function alterarContexto(contexto) {
 // O método .classList.contains() retorna um boloeano para caso a classe exista (true) ou para caso ela não exista (false).
 
 // Os métodos .classList.add() e .classList.remove() fazem, respectivamente, a adição de uma classe à lista de classes ou a remoção desta classe da lista. Tem como adicionar ou remover mais de uma classe por vez, colocando-as todas separadas por vírgulas.
+
+// Cada objeto construído de Audio, possui dois atributos que merecem destaque neste momento: currentTime e volume. O primeiro faz com que o audio avance até o tempo, em segundos, relativo ao valor atribuído; o segundo, por sua vez, varia de 0 a 1, sendo, por exemplo, 0.5 o ponto de meio do volume (50%).
