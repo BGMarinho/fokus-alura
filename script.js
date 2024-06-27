@@ -7,7 +7,11 @@ const timerBt = document.querySelector("#start-pause");
 const image = document.querySelector(".app__image");
 const title = document.querySelector(".app__title");
 const botoes = document.querySelectorAll(".app__card-button");
+const timerBtTexto = document.querySelector("#start-pause span");
 const musicaFocoInput = document.querySelector("#alternar-musica");
+const audioPlay = new Audio("/sons/play.wav");
+const audioPause = new Audio("/sons/pause.mp3");
+const audioBeep = new Audio("/sons/beep.mp3");
 // Utilizaremos o construtor "new Audio" e passaremos como parâmetro o caminho do áudio que se quer construir um objeto.
 const musica = new Audio("/sons/luna-rise-part-one.mp3");
 // Fazendo com que a música sempre reinicie depois de finalizada.
@@ -75,30 +79,38 @@ function alterarContexto(contexto) {
 }
 
 const contagemRegressiva = () => {
-  if (tempoDecorridoSegundos >= 0) {
+  if (tempoDecorridoSegundos <= 0) {
+    audioBeep.play();
     zerar();
-    alert('Tempo finalizado"');
     return;
   }
   tempoDecorridoSegundos -= 1;
   console.log("Temporizador: ", tempoDecorridoSegundos);
+  console.log("intervaloId: ", intervaloId);
 };
 
-// Como referenciarei a função contagemRegressiva no lugar da função de callback do escutador de evento - que é a mesma coisa só que de outra forma -, preciso declarar o escutador depois da função. Para funções declaradas no modelo "function declaration", não é necessário seguir esta regra.
-timerBt.addEventListener("click", iniciarOuPausar);
+// Como referenciarei a função contagemRegressiva no lugar da função de callback do escutador de evento - que é a mesma coisa só que de outra forma -, preciso declarar o escutador depois da função. Para funções declaradas no modelo "function declaration", não é necessário seguir esta regra porque a função sofre hoisting.
+timerBt.addEventListener("click", iniciarOuReiniciar);
 
-function iniciarOuPausar() {
+function iniciarOuReiniciar() {
   if (intervaloId) {
+    audioPause.play();
+    timerBtTexto.textContent = "Começar";
+    alert("Tempo finalizado!"); // Essa instrução, independentemente de onde esteja aqui nesse bloco, será executada antes de todas as outras.
     zerar();
     return;
   }
-  // O método setInterval espera receber dois argumentos: a função que se quer executar e o tempo em que se quer que essa função seja executada, em milissegundos.
+  audioPlay.play();
+  timerBtTexto.textContent = "Reiniciar";
+  // O método setInterval espera receber dois argumentos: a função que se quer executar e o tempo em que se quer que essa função seja executada, em milissegundos. O que ficará armazenado na variável é um valor do tipo number que é o id desse interval, ou seja, dessa execução.
   intervaloId = setInterval(contagemRegressiva, 1000);
 }
 
 function zerar() {
   clearInterval(intervaloId);
   intervaloId = null;
+  tempoDecorridoSegundos = 5;
+  timerBtTexto.textContent = "Começar";
 }
 
 // DOM (Document Object Model) é uma forma padronizada de representar e interagir com elementos em documentos HTML e XML. Sua estrutura representa um documento em formato de árvore de elementos, em que cada elemento representa uma parte do documento.
@@ -128,3 +140,13 @@ function zerar() {
 // Os métodos .classList.add() e .classList.remove() fazem, respectivamente, a adição de uma classe à lista de classes ou a remoção desta classe da lista. Tem como adicionar ou remover mais de uma classe por vez, colocando-as todas separadas por vírgulas.
 
 // Cada objeto construído de Audio, possui dois atributos que merecem destaque neste momento: currentTime e volume. O primeiro faz com que o audio avance até o tempo, em segundos, relativo ao valor atribuído; o segundo, por sua vez, varia de 0 a 1, sendo, por exemplo, 0.5 o ponto de meio do volume (50%).
+
+// A propriedade .parentNode nos permite acessar o elemento pai de um elemento HTML - justamente porque o seu valor é a referência deste elemento pai.
+
+// A propriedade .childNodes nos permite acessar uma lista com todos os elementos filhos de um dado elemento HTML. Não sei qual é a tipagem dessa lista, mas acredito que seja NodeList e, caso seja, tem atributos e métodos próprios.
+
+// A propriedade .nextElementSibling nos permite acessar o próximo irmão (nó adjacente).
+
+// A propriedade .previusElementSibling nos permite acessar o irmão anterior (nó adjacente).
+
+// A propriedade .textContent, diferentemente da .innerHTML, serve apenas para inserir textos, no sentido de que caso sejam inseridas tags html, elas serão entendidas como parte do texto e não como hipertexto de marcação.
