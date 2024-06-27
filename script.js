@@ -9,6 +9,7 @@ const title = document.querySelector(".app__title");
 const botoes = document.querySelectorAll(".app__card-button");
 const timerBtTexto = document.querySelector("#start-pause span");
 const musicaFocoInput = document.querySelector("#alternar-musica");
+const tempoNaTela = document.querySelector("#timer");
 const audioPlay = new Audio("/sons/play.wav");
 const audioPause = new Audio("/sons/pause.mp3");
 const audioBeep = new Audio("/sons/beep.mp3");
@@ -17,21 +18,24 @@ const musica = new Audio("/sons/luna-rise-part-one.mp3");
 // Fazendo com que a música sempre reinicie depois de finalizada.
 musica.loop = true;
 
-let tempoDecorridoSegundos = 5;
+let tempoDecorridoSegundos = 1500;
 let intervaloId = null;
 
 // O método .addEventListener() funciona com a passagem de dois parâmetros: o tipo de evento que se quer associar ao elemento em questão e uma função callback - anônima ou a referência de uma função nominada - que executará algum comando quando o evento ocorrer.
 focoBt.addEventListener("click", (e) => {
+  tempoDecorridoSegundos = 1500;
   alterarContexto("foco");
   focoBt.classList.add("active");
 });
 
 curtoBt.addEventListener("click", (e) => {
+  tempoDecorridoSegundos = 300;
   alterarContexto("descanso-curto");
   curtoBt.classList.add("active");
 });
 
 longoBt.addEventListener("click", (e) => {
+  tempoDecorridoSegundos = 900;
   alterarContexto("descanso-longo");
   longoBt.classList.add("active");
 });
@@ -47,6 +51,7 @@ musicaFocoInput.addEventListener("change", () => {
 });
 
 function alterarContexto(contexto) {
+  mostrarTempo();
   botoes.forEach((botao) => {
     botao.classList.remove("active");
   });
@@ -85,8 +90,7 @@ const contagemRegressiva = () => {
     return;
   }
   tempoDecorridoSegundos -= 1;
-  console.log("Temporizador: ", tempoDecorridoSegundos);
-  console.log("intervaloId: ", intervaloId);
+  mostrarTempo();
 };
 
 // Como referenciarei a função contagemRegressiva no lugar da função de callback do escutador de evento - que é a mesma coisa só que de outra forma -, preciso declarar o escutador depois da função. Para funções declaradas no modelo "function declaration", não é necessário seguir esta regra porque a função sofre hoisting.
@@ -96,8 +100,9 @@ function iniciarOuReiniciar() {
   if (intervaloId) {
     audioPause.play();
     timerBtTexto.textContent = "Começar";
-    alert("Tempo finalizado!"); // Essa instrução, independentemente de onde esteja aqui nesse bloco, será executada antes de todas as outras.
+    // alert("Tempo finalizado!"); // Essa instrução, independentemente de onde esteja aqui nesse bloco, será executada antes de todas as outras.
     zerar();
+    mostrarTempo();
     return;
   }
   audioPlay.play();
@@ -109,9 +114,20 @@ function iniciarOuReiniciar() {
 function zerar() {
   clearInterval(intervaloId);
   intervaloId = null;
-  tempoDecorridoSegundos = 5;
+  tempoDecorridoSegundos = 1500;
   timerBtTexto.textContent = "Começar";
 }
+
+function mostrarTempo() {
+  const tempo = new Date(tempoDecorridoSegundos * 1000);
+  const tempoFormatado = tempo.toLocaleTimeString("pt-Br", {
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  tempoNaTela.innerHTML = `${tempoFormatado}`;
+}
+
+mostrarTempo();
 
 // DOM (Document Object Model) é uma forma padronizada de representar e interagir com elementos em documentos HTML e XML. Sua estrutura representa um documento em formato de árvore de elementos, em que cada elemento representa uma parte do documento.
 
