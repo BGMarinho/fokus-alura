@@ -4,6 +4,7 @@ const curtoBt = document.querySelector(".app__card-button--curto");
 const longoBt = document.querySelector(".app__card-button--longo");
 const timer = document.querySelector(".app__card-timer");
 const timerBt = document.querySelector("#start-pause");
+const timerBtImage = document.querySelector("#start-pause img");
 const image = document.querySelector(".app__image");
 const title = document.querySelector(".app__title");
 const botoes = document.querySelectorAll(".app__card-button");
@@ -99,6 +100,7 @@ timerBt.addEventListener("click", iniciarOuReiniciar);
 function iniciarOuReiniciar() {
   if (intervaloId) {
     audioPause.play();
+    timerBtImage.setAttribute("src", "/imagens/play_arrow.png");
     timerBtTexto.textContent = "Começar";
     // alert("Tempo finalizado!"); // Essa instrução, independentemente de onde esteja aqui nesse bloco, será executada antes de todas as outras.
     zerar();
@@ -107,6 +109,7 @@ function iniciarOuReiniciar() {
   }
   audioPlay.play();
   timerBtTexto.textContent = "Reiniciar";
+  timerBtImage.setAttribute("src", "/imagens/pause.png");
   // O método setInterval espera receber dois argumentos: a função que se quer executar e o tempo em que se quer que essa função seja executada, em milissegundos. O que ficará armazenado na variável é um valor do tipo number que é o id desse interval, ou seja, dessa execução.
   intervaloId = setInterval(contagemRegressiva, 1000);
 }
@@ -166,3 +169,5 @@ mostrarTempo();
 // A propriedade .previusElementSibling nos permite acessar o irmão anterior (nó adjacente).
 
 // A propriedade .textContent, diferentemente da .innerHTML, serve apenas para inserir textos, no sentido de que caso sejam inseridas tags html, elas serão entendidas como parte do texto e não como hipertexto de marcação.
+
+// Para trabalhar com datas, utilizaremos sempre um objeto construído a partir do método "new Date()". Pesquisar sobre a documentação do objeto Date para mais detalhes sobre atributos e métodos.
